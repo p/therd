@@ -1,6 +1,5 @@
 express = require('express')
 routes = require('./routes')
-user = require('./routes/user')
 http = require('http')
 path = require('path')
 
@@ -26,7 +25,6 @@ app.configure('development', ()->
 
 app.get('/', routes.index)
 app.post('/pr', routes.test_pr)
-app.get('/users', user.list)
 
 http.createServer(app).listen(app.get('port'), ()->
   console.log("Express server listening on port " + app.get('port'));
