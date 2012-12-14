@@ -19,9 +19,8 @@ exports.test_pr = (req, res)->
 
 exports.build = (req, res)->
   build = req.params.build
-  doc = db.doc build
-  doc.get (err, response)->
-    if !response? and err.error == 'not_found'
+  doc = db.build build, (err, response)->
+    if err and err.error == 'not_found'
       status = 'missing'
     else
       status = response.status
