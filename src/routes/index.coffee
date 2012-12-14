@@ -1,4 +1,5 @@
 db = require '../db'
+async = require 'async'
 
 timestamp = ()->
   date = new Date()
