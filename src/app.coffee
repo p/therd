@@ -25,6 +25,7 @@ app.configure('development', ()->
 
 app.get('/', routes.index)
 app.post('/pr', routes.test_pr)
+app.get('/status/:build', routes.build)
 
 http.createServer(app).listen(app.get('port'), ()->
   console.log("Express server listening on port " + app.get('port'));

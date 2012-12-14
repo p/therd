@@ -8,3 +8,7 @@ exports.index = (req, res) ->
 exports.test_pr = (req, res)->
   id = 'pr-' + req.body.pr + '-' + timestamp()
   res.redirect 'status/' + id
+
+exports.build = (req, res)->
+  build = req.params.build
+  res.render('build', {build: build, title: 'Build ' + build})
