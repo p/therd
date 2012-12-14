@@ -2,4 +2,8 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #{title}
+  p What shall we test today?
+  
+  form(method='post', action='/pr')
+    label(for='pr') Pull request:
+    input(type='text', name='pr')
