@@ -1,4 +1,6 @@
+async = require 'async'
 db = require '../db'
+builder = require '../builder'
 
 timestamp = ()->
   date = new Date()
@@ -9,8 +11,13 @@ exports.index = (req, res) ->
 
 exports.test_pr = (req, res)->
   id = 'pr-' + req.body.pr + '-' + timestamp()
-  
-  db.soft_put_build id, {status: 'pending'}, (err, response) ->
+  doc = {status: 'pending'}
+  async.series [
+    (callback)->
+      db.soft_put_build id, doc, callback
+    (callback)->
+      builder.start id, callback
+  ], (err, result)->
     if err
       # ignore missing doc, fail on other errors
       res.send 500, JSON.stringify(err)
