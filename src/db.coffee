@@ -1,7 +1,7 @@
 async = require 'async'
-mongode = require 'mongode'
+fsdocs = require '../deps/fsdocs'
 
-conn = mongode.connect('mongo://127.0.0.1/thunder')
+docs = new fsdocs.FSDocs(__dirname + '/../data')
 
 #server.info (err,response)->
   #console.log response
@@ -15,18 +15,27 @@ exports.initialize = ()->
     #console.log err, response
 
 exports.build = (id, callback)->
-  collection = conn.collection('builds')
-  collection.findOne {id: id}, callback
+  docs.get 'build-' + id, callback
 
 exports.soft_put_build = (id, attrs, callback)->
-  identity = {}
-  identity[id] = id
   async.series [
     (callback)->
       # attributes
-      attrs.id = id
-      collection = conn.collection('builds')
-      collection.insert attrs, callback
+      docs.put 'build-' + id, attrs, callback
+    (callback)->
+      # index read
+      docs.get 'builds', (err, document)->
+        if err and err.code != 'ENOENT'
+          callback err, document
+        else
+          if err
+            # no file
+            document = {builds:[]}
+          # index update
+          document.builds.push id
+          # index write
+          # XXX implement conflict resolution
+          docs.put 'builds', document, callback
   ], (err, objects)->
     if err
       console.warn(err.message)
