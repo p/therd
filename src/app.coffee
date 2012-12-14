@@ -3,6 +3,9 @@ routes = require('./routes')
 http = require('http')
 path = require('path')
 
+db = require './db'
+db.initialize()
+
 app = express()
 
 app.configure(() ->
