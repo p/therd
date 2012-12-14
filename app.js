@@ -4,8 +4,8 @@
  */
 
 var express = require('express')
-  , routes = require('./routes')
-  , user = require('./routes/user')
+  , routes = require('./gen/routes')
+  , user = require('./gen/routes/user')
   , http = require('http')
   , path = require('path');
 
