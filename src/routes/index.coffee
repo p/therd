@@ -1,5 +1,4 @@
 db = require '../db'
-async = require 'async'
 
 timestamp = ()->
   date = new Date()
@@ -11,32 +10,12 @@ exports.index = (req, res) ->
 exports.test_pr = (req, res)->
   id = 'pr-' + req.body.pr + '-' + timestamp()
   
-  doc = db.doc(id)
-  async.series [
-    #(callback)->
-      # attributes
-      #doc.get callback
-    (callback)->
-      # attributes
-      doc.body.status = 'pending'
-      doc.save callback
-    (callback)->
-      # index
-      doc = db.doc 'builds'
-      doc.get (err, response)->
-        if !response? and err.error != 'not_found'
-          # ignore missing doc, fail on other errors
-          res.send 500, JSON.stringify(err)
-      doc.body = {} unless doc.body?
-      doc.body[id] = id
-      doc.save callback
-    ],
-    (err, response)->
-      if err
-        console.log err
-        res.send 500, JSON.stringify(err)
-      else
-        res.redirect 'status/' + id
+  db.soft_put_build id, {status: 'pending'}, (err, response) ->
+    if err
+      # ignore missing doc, fail on other errors
+      res.send 500, JSON.stringify(err)
+    else
+      res.redirect 'status/' + id
 
 exports.build = (req, res)->
   build = req.params.build
