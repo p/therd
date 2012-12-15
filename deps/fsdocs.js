@@ -61,7 +61,7 @@ FSDocs.prototype = {
       p = dirname.indexOf('/', ++p);
       if (p === -1) return callback();
       fs.mkdir(location+'/'+dirname.substr(0, p), mode, function (err) {
-        if (err && (typeof err !== 'object' || e.code !== 'EEXIST')) {
+        if (err && (typeof err !== 'object' || err.code !== 'EEXIST')) {
           callback(err);
         } else {
           next();
