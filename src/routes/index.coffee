@@ -1,6 +1,9 @@
 async = require 'async'
 db = require '../db'
 builder = require '../builder'
+kue = require 'kue'
+
+jobs = kue.createQueue()
 
 timestamp = ()->
   date = new Date()
@@ -16,7 +19,12 @@ exports.test_pr = (req, res)->
     (callback)->
       db.soft_put_build id, doc, callback
     (callback)->
-      builder.start id, callback
+      job = jobs.create 'build', {
+        title: "build #{id}"
+        build_id: id
+      }
+      job.save()
+      callback null, null
   ], (err, result)->
     if err
       # ignore missing doc, fail on other errors
