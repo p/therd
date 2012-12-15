@@ -40,3 +40,23 @@ exports.soft_put_build = (id, attrs, callback)->
     if err
       console.warn(err.message)
     callback err, objects
+
+exports.update_build = (id, attrs, callback)->
+  key = 'build-' + id
+  state = null
+  async.series [
+    (callback)->
+      # read state - assume it exists
+      docs.get key, (err, document)->
+        unless err
+          state = document.state
+        callback err, document
+    (callback)->
+      # write state
+      for key in attrs
+        state[key] = attrs[key]
+      docs.put key, state, callback
+  ], (err, objects)->
+    if err
+      console.warn(err.message)
+    callback err, objects
