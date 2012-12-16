@@ -1,6 +1,5 @@
 async = require 'async'
 db = require '../db'
-builder = require '../builder'
 kue = require 'kue'
 
 jobs = kue.createQueue()

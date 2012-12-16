@@ -5,12 +5,15 @@ exports.start = (build_id, callback)->
   new Build(build_id).execute()
   callback null, {}
 
+exports.process = (build_id, callback)->
+  new Build(build_id).execute callback
+
 class Build
   constructor: (build_id)->
     @build_id = build_id
     @state = {}
   
-  execute: ()->
+  execute: (callback)->
     console.log 'starting build', this.build_id
     options = {
       env: process.env,
@@ -26,6 +29,7 @@ class Build
       self.add_output(data)
     p.on 'exit', (code)->
       console.log "build #{self.build_id} exited with #{code}"
+      callback(null)
   
   add_output: (output)->
     @state.output = '' unless @state.output?
