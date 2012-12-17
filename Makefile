@@ -9,3 +9,6 @@ package.json: package.json.in
 # Empty dir, create
 gen:
 	mkdir gen
+
+coffee:
+	coffee -c -w -o gen src
