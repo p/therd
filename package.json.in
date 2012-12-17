@@ -7,11 +7,12 @@
   },
   "dependencies": {
     "express": "3.0.4",
-    "couchdb-api": "*",
+    //"couchdb-api": "*",
     "async": "*",
     "connect-assets": "*",
     "coffee-script": "*",
     "jade": "*",
-    "stylus": "*"
+    "hashish": "*",
+    "stylus": "*",
   }
 }
