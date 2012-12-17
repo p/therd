@@ -7,3 +7,39 @@ block content
   form(method='post', action='/pr')
     label(for='pr') Pull request:
     input(type='text', name='pr')
+    
+    p
+      label
+        input(type='checkbox', name='postgres')
+        | postgresql
+      label
+        input(type='checkbox', name='mysql')
+        | mysql
+      label
+        input(type='checkbox', name='mysqli')
+        | mysqli
+      label
+        input(type='checkbox', name='sqlite')
+        | sqlite
+    
+    p
+      label
+        input(type='checkbox', name='unit')
+        | unit
+      label
+        input(type='checkbox', name='functional')
+        | functional
+      label
+        input(type='checkbox', name='slow')
+        | slow
+    
+    p
+      label
+        input(type='checkbox', name='update30')
+        | update from 3.0
+      label
+        input(type='checkbox', name='check')
+        | commit check
+      label
+        input(type='checkbox', name='merge31')
+        | merge into develop

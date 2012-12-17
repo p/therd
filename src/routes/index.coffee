@@ -10,7 +10,7 @@ timestamp = ()->
   (date.getTime() - 1355477197389) * 1000 + date.getMilliseconds()
 
 exports.index = (req, res) ->
-  res.render('index', { title: 'Express' });
+  res.render('index', { title: 'Thundering Herd' });
 
 exports.test_pr = (req, res)->
   id = 'pr-' + req.body.pr + '-' + timestamp()
