@@ -10,36 +10,36 @@ block content
     
     p
       label
-        input(type='checkbox', name='postgres')
+        input(type='checkbox', name='run[postgres]')
         | postgresql
       label
-        input(type='checkbox', name='mysql')
+        input(type='checkbox', name='run[mysql]')
         | mysql
       label
-        input(type='checkbox', name='mysqli')
+        input(type='checkbox', name='run[mysqli]')
         | mysqli
       label
-        input(type='checkbox', name='sqlite')
+        input(type='checkbox', name='run[sqlite]')
         | sqlite
     
     p
       label
-        input(type='checkbox', name='unit')
+        input(type='checkbox', name='run[unit]')
         | unit
       label
-        input(type='checkbox', name='functional')
+        input(type='checkbox', name='run[functional]')
         | functional
       label
-        input(type='checkbox', name='slow')
+        input(type='checkbox', name='run[slow]')
         | slow
     
     p
       label
-        input(type='checkbox', name='update30')
+        input(type='checkbox', name='run[update30]')
         | update from 3.0
       label
-        input(type='checkbox', name='check')
+        input(type='checkbox', name='run[check]')
         | commit check
       label
-        input(type='checkbox', name='merge31')
+        input(type='checkbox', name='run[merge31]')
         | merge into develop

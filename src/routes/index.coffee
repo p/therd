@@ -1,6 +1,7 @@
 async = require 'async'
 db = require '../db'
 kue = require 'kue'
+Hash = require 'hashish'
 
 d = console.log
 jobs = kue.createQueue()
@@ -14,34 +15,35 @@ exports.index = (req, res) ->
 
 exports.test_pr = (req, res)->
   id = 'pr-' + req.body.pr + '-' + timestamp()
-  doc = {status: 'pending'}
-  async.series [
-    (callback)->
-      db.soft_put_build id, doc, callback
-    (callback)->
-      job = jobs.create 'build', {
-        title: "build #{id}"
-        build_id: id
-      }
-      job.save()
-      callback null, null
-  ], (err, result)->
-    if err
-      # ignore missing doc, fail on other errors
-      res.send 500, JSON.stringify(err)
-    else
-      res.redirect 'status/' + id
+  if req.body.run
+    scope = new Hash req.body.run
+    scope = scope.keys
+    doc = {status: 'pending', scope: scope}
+    async.series [
+      (callback)->
+        db.soft_put_build id, doc, callback
+      (callback)->
+        job = jobs.create 'build', {
+          title: "build #{id}"
+          build_id: id
+        }
+        job.save()
+        callback null, null
+    ], (err, result)->
+      if err
+        # ignore missing doc, fail on other errors
+        res.send 500, JSON.stringify(err)
+      else
+        res.redirect 'status/' + id
+  else
+    res.send 422, 'Please set a scope'
 
 exports.build = (req, res)->
   build = req.params.build
-  doc = db.build build, (err, response)->
+  db.build build, (err, doc)->
     if err and err.error == 'not_found'
-      status = 'missing'
-      output = ''
-    else
-      status = response.status
-      output = response.output
+      doc = {status: 'missing'}
     res.render 'build', {
-      build: build, status: status, title: 'Build ' + build,
-      output: output,
+      build: build, title: 'Build ' + build,
+      state: doc,
     }

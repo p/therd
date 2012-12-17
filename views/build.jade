@@ -4,7 +4,14 @@ block content
   h1 Build #{build}
   
   .status
-    | Build is #{status}.
+    | Build is #{state.status}.
+  
+  if state.scope
+    .scope
+      Selected options:
+      ul
+        each run in state.scope
+          li= run
   
   .output
-    = output
+    = state.output
