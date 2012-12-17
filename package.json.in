@@ -6,13 +6,17 @@
     "start": "node app"
   },
   "dependencies": {
-    "express": "3.0.4",
-    //"couchdb-api": "*",
-    "async": "*",
-    "connect-assets": "*",
     "coffee-script": "*",
+    
+    "express": "3.0.4",
+    "connect-assets": "*",
     "jade": "*",
-    "hashish": "*",
     "stylus": "*",
+    
+    "async": "*",
+    "hashish": "*",
+    
+    //"couchdb-api": "*",
+    "kue": "*",
   }
 }
