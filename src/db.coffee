@@ -21,12 +21,12 @@ exports.build = (id, callback)->
   docs.get 'build-' + id, callback
 
 exports.soft_put_build = (id, attrs, callback)->
+  #d "Adding build #{id}"
   async.series [
     (callback)->
       # attributes
       #if typeof attrs != Object
         #console.log attrs, id, typeof attrs
-      d attrs
       docs.put 'build-' + id, attrs, callback
     (callback)->
       # index read
@@ -43,7 +43,6 @@ exports.soft_put_build = (id, attrs, callback)->
           # XXX implement conflict resolution
           #if typeof document != object
             #console.log document, typeof document, 11
-          d document
           docs.put 'builds', document, callback
   ], (err, objects)->
     if err
@@ -51,7 +50,7 @@ exports.soft_put_build = (id, attrs, callback)->
     callback err, objects
 
 exports.update_build = (id, attrs, callback)->
-  #console.log attrs, typeof attrs
+  #d "Updating build #{id}"
   key = 'build-' + id
   state = null
   async.series [
@@ -59,18 +58,17 @@ exports.update_build = (id, attrs, callback)->
       # read state - assume it exists
       docs.get key, (err, document)->
         unless err
-          state = document.state or {}
+          state = document or {}
         callback err, document
     (callback)->
-      state = new Hash(state).update(attrs)
+      state = new Hash(state)
+      state.update(attrs)
+      state.tap (raw)->
+        state = raw
       # write state
-      #for key in attrs
-        #state[key] = attrs[key]
-      #if typeof state != Object
-        #console.log 12, state, typeof state
-      #d state, attrs
-      docs.put key, state, callback
+      docs.put key, state, (err, ok)->
+        callback err, ok
   ], (err, objects)->
     if err
-      console.warn(err.message)
+      console.warn "Error updating build #{id}", err.message
     callback err, objects

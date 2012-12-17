@@ -2,6 +2,7 @@ async = require 'async'
 db = require '../db'
 kue = require 'kue'
 
+d = console.log
 jobs = kue.createQueue()
 
 timestamp = ()->
@@ -36,6 +37,11 @@ exports.build = (req, res)->
   doc = db.build build, (err, response)->
     if err and err.error == 'not_found'
       status = 'missing'
+      output = ''
     else
       status = response.status
-    res.render('build', {build: build, status: status, title: 'Build ' + build})
+      output = response.output
+    res.render 'build', {
+      build: build, status: status, title: 'Build ' + build,
+      output: output,
+    }
