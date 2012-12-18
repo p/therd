@@ -21,5 +21,7 @@
     
     //"couchdb-api": "*",
     "kue": "*",
+    
+    "github": "*",
   }
 }
