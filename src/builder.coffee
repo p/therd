@@ -1,6 +1,7 @@
 assert = require 'assert'
 child_process = require 'child_process'
 db = require './db'
+config = require 'config'
 
 d = console.log
 
@@ -56,14 +57,14 @@ class Build
       env: process.env,
       stdio: ['ignore', 'pipe', 'pipe'],
     }
-    p = child_process.spawn 'echo', exploded
+    p = child_process.spawn config.app.dispatcher_path, exploded
     p.stdout.setEncoding('utf8')
     p.stdout.on 'data', (data)->
       self.add_output data
     p.stderr.setEncoding('utf8')
-    p.stderr.on 'data', (data, callback)->
+    p.stderr.on 'data', (data)->
       assert callback
-      self.add_output(data, callback)
+      self.add_output(data)
     p.on 'exit', (code)->
       console.log "build #{self.build_id} exited with #{code}"
       self.state.status = 'finished'
