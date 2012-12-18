@@ -24,6 +24,7 @@ explode_scope = (scope)->
   for global in globals
     if global in scope
       exploded.push global
+  exploded
 
 class Build
   constructor: (build_id)->
@@ -50,12 +51,12 @@ class Build
   do_execute: (callback)->
     assert callback
     self = this
-    explode_scope self.state.scope
+    exploded = explode_scope self.state.scope
     options = {
       env: process.env,
       stdio: ['ignore', 'pipe', 'pipe'],
     }
-    p = child_process.spawn 'ls', ['-l']
+    p = child_process.spawn 'echo', exploded
     p.stdout.setEncoding('utf8')
     p.stdout.on 'data', (data)->
       self.add_output data
