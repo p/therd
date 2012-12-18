@@ -72,3 +72,15 @@ exports.update_build = (id, attrs, callback)->
     if err
       console.warn "Error updating build #{id}", err.message
     callback err, objects
+
+exports.update_build_sync = (id, attrs)->
+  #d "Updating build #{id}"
+  key = 'build-' + id
+  # read state - assume it exists
+  state = docs.getSync key or {}
+  state = new Hash(state)
+  state.update(attrs)
+  state.tap (raw)->
+    state = raw
+  # write state
+  docs.putSync key, state
