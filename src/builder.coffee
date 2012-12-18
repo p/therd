@@ -1,7 +1,8 @@
 assert = require 'assert'
 child_process = require 'child_process'
-db = require './db'
 config = require 'config'
+memorystream = require 'memorystream'
+db = require './db'
 
 d = console.log
 
@@ -47,6 +48,7 @@ class Build
       if err
         callback(err)
       else
+        self.state.output = ''
         self.do_execute callback
   
   do_execute: (callback)->
@@ -58,11 +60,18 @@ class Build
       stdio: ['ignore', 'pipe', 'pipe'],
     }
     p = child_process.spawn config.app.dispatcher_path, exploded
-    p.stdout.setEncoding('utf8')
-    p.stdout.on 'data', (data)->
-      self.add_output data
-    p.stderr.setEncoding('utf8')
-    p.stderr.on 'data', (data)->
+    ms = new memorystream
+    #p.stdout.setEncoding('utf8')
+    p.stdout.pipe(ms)
+    #p.stdout.on 'data', (data)->
+      #self.add_output data
+    #p.stderr.setEncoding('utf8')
+    p.stderr.pipe(ms)
+    #p.stderr.on 'data', (data)->
+      #assert callback
+      #self.add_output(data)
+    ms.setEncoding('utf8')
+    ms.on 'data', (data)->
       assert callback
       self.add_output(data)
     p.on 'exit', (code)->

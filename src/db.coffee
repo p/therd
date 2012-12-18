@@ -74,7 +74,7 @@ exports.update_build = (id, attrs, callback)->
     callback err, objects
 
 exports.update_build_sync = (id, attrs)->
-  #d "Updating build #{id}"
+  #d "Updating build #{id} synchronously"
   key = 'build-' + id
   # read state - assume it exists
   state = docs.getSync key or {}
@@ -83,4 +83,20 @@ exports.update_build_sync = (id, attrs)->
   state.tap (raw)->
     state = raw
   # write state
-  docs.putSync key, state
+  ok = docs.putSync key, state
+  unless ok
+    doc = docs.getSync key
+    state = combine doc, attrs
+    ok = docs.putSync key, state
+    unless ok
+      throw 'Save failed twice'
+
+combine = (base, cur)->
+  version = base._version
+  hash = new Hash(base)
+  hash.update(cur)
+  hash.tap (raw)->
+    cur = raw
+  if version
+    cur._version = version + 1
+  cur

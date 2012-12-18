@@ -17,6 +17,7 @@
     "hashish": "*",
     "config": "*",
     "js-yaml": "*",
+    "memorystream": "*",
     
     //"couchdb-api": "*",
     "kue": "*",
