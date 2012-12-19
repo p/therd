@@ -22,7 +22,7 @@ exports.build = (id, callback)->
 
 exports.soft_put_build = (id, attrs, callback)->
   #d "Adding build #{id}"
-  async.series [
+  async.waterfall [
     (callback)->
       # attributes
       #if typeof attrs != Object
@@ -30,37 +30,31 @@ exports.soft_put_build = (id, attrs, callback)->
       docs.put 'build-' + id, attrs, callback
     (callback)->
       # index read
-      docs.get 'builds', (err, document)->
-        if err and err.code != 'ENOENT'
-          callback err, document
-        else
-          if err
-            # no file
-            document = {builds:[]}
-          # index update
-          document.builds.push id
-          # index write
-          # XXX implement conflict resolution
-          #if typeof document != object
-            #console.log document, typeof document, 11
-          docs.put 'builds', document, callback
-  ], (err, objects)->
+      docs.get 'builds', callback
+    (document, callback)->
+      document = document || {}
+      document.builds = document.builds || []
+      # index update
+      document.builds.push id
+      # index write
+      # XXX implement conflict resolution
+      #if typeof document != object
+        #console.log document, typeof document, 11
+      docs.put 'builds', document, callback
+  ], (err, ok)->
     if err
       console.warn(err.message)
-    callback err, objects
+    callback err, ok
 
 exports.update_build = (id, attrs, callback)->
   #d "Updating build #{id}"
   key = 'build-' + id
-  state = null
-  async.series [
+  async.waterfall [
     (callback)->
       # read state - assume it exists
-      docs.get key, (err, document)->
-        unless err
-          state = document or {}
-        callback err, document
-    (callback)->
+      docs.get key, callback
+    (document, callback)->
+      state = document or {}
       state = new Hash(state)
       state.update(attrs)
       state.tap (raw)->
@@ -68,10 +62,10 @@ exports.update_build = (id, attrs, callback)->
       # write state
       docs.put key, state, (err, ok)->
         callback err, ok
-  ], (err, objects)->
+  ], (err, ok)->
     if err
       console.warn "Error updating build #{id}", err.message
-    callback err, objects
+    callback err, ok
 
 exports.update_build_sync = (id, attrs)->
   #d "Updating build #{id} synchronously"
