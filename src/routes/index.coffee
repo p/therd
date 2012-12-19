@@ -1,7 +1,8 @@
 async = require 'async'
-db = require '../db'
 kue = require 'kue'
 Hash = require 'hashish'
+db = require '../db'
+phpbb = require '../phpbb'
 
 d = console.log
 jobs = kue.createQueue()
@@ -14,11 +15,13 @@ exports.index = (req, res) ->
   res.render('index', { title: 'Thundering Herd' });
 
 exports.test_pr = (req, res)->
+  pr = req.body.pr
+  pr_msg = phpbb.resolve_pr pr
   id = 'pr-' + req.body.pr + '-' + timestamp()
   if req.body.run
     scope = new Hash req.body.run
     scope = scope.keys
-    doc = {status: 'pending', scope: scope}
+    doc = {status: 'pending', scope: scope, pr_msg: pr_msg}
     async.series [
       (callback)->
         db.soft_put_build id, doc, callback

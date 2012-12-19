@@ -9,19 +9,25 @@ gh.authenticate {
   password: config.app.github_password
 }
 
-resolve_pr = (pr, done)->
-  msg = {
-    user: 'phpbb'
-    repo: 'phpbb3'
-    number: pr
-  }
+# Useful fields:
+#
+# head.ref
+# head.repo.clone_url
+# base.ref
+# user.login
+
+is_number = (v)->
+  !isNaN(parseFloat(v)) && isFinite(v)
+
+exports.resolve_pr = (pr)->
+  if is_number pr
+    msg = {
+      user: 'phpbb'
+      repo: 'phpbb3'
+      number: pr
+    }
+  else
+    throw 'This path is not implemented yet'
+
+fetch_pr_meta: (msg, done)->
   gh.pullRequests.get msg, done
-  #(err, data)->
-    #if err
-      #done err
-    #else
-      #meta = {
-        #head_ref: data.head.ref
-        #base_ref: data.base.ref
-      #}
-      #done null, meta
