@@ -1,2 +1,4 @@
 app:
   dispatcher_path: /home/pie/apps/git-phpbb-tools/run/therd
+  github_username: urbot
+  github_password: an7OckIr

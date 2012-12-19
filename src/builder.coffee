@@ -3,6 +3,7 @@ child_process = require 'child_process'
 config = require 'config'
 memorystream = require 'memorystream'
 db = require './db'
+phpbb = require './phpbb'
 
 d = console.log
 
