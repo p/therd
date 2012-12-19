@@ -61,6 +61,8 @@ class Build
         phpbb.fetch_pr_meta self.state.pr_msg, done
       (pr_meta, done)->
         self.build_exec ['git', 'clone', pr_meta.head.repo.clone_url], done
+      (done)->
+        console.log "build #{self.build_id} exited with #{self.exit_code}"
     ], callback
   
   build_exec: (cmd, callback)->
@@ -91,10 +93,9 @@ class Build
        console.log data
       self.add_output(data)
     p.on 'exit', (code, signal)->
-      p_code = code
+      self.exit_code = code
       p_signal = signal
     p.on 'close', ()->
-      console.log "build #{self.build_id} exited with #{p_code}"
       self.state.status = 'finished'
       self.save_state ()->
         callback(null)
