@@ -57,12 +57,16 @@ class Build
   do_execute: (callback)->
     assert callback
     self = this
+    self.exploded_scope = explode_scope self.state.scope
     async.waterfall [
       (done)->
         phpbb.fetch_pr_meta self.state.pr_msg, done
       (pr_meta, done)->
-        build_dir = path.join(config.app.build_root, self.build_id)
-        self.build_exec ['git', 'clone', pr_meta.head.repo.clone_url, build_dir], done
+        self.pr_meta = pr_meta
+        self.build_dir = path.join(config.app.build_root, self.build_id)
+        self.build_exec ['rm', '-rf', self.build_dir], done
+      (done)->
+        self.build_exec ['git', 'clone', self.pr_meta.head.repo.clone_url, self.build_dir], done
       (done)->
         console.log "build #{self.build_id} exited with #{self.exit_code}"
     ], callback
@@ -101,9 +105,6 @@ class Build
       self.state.status = 'finished'
       self.save_state ()->
         callback(null)
-  
-  wip: ()->
-    exploded = explode_scope self.state.scope
   
   # callback may be null
   add_output: (output, callback)->

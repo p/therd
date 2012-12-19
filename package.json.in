@@ -18,6 +18,8 @@
     "config": "*",
     "js-yaml": "*",
     "memorystream": "*",
+    // https://github.com/isaacs/rimraf/issues/14
+    //"rimraf": "*",
     
     //"couchdb-api": "*",
     "kue": "*",
