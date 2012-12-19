@@ -1,4 +1,5 @@
 assert = require 'assert'
+path = require 'path'
 async = require 'async'
 child_process = require 'child_process'
 config = require 'config'
@@ -60,7 +61,8 @@ class Build
       (done)->
         phpbb.fetch_pr_meta self.state.pr_msg, done
       (pr_meta, done)->
-        self.build_exec ['git', 'clone', pr_meta.head.repo.clone_url], done
+        build_dir = path.join(config.app.build_root, self.build_id)
+        self.build_exec ['git', 'clone', pr_meta.head.repo.clone_url, build_dir], done
       (done)->
         console.log "build #{self.build_id} exited with #{self.exit_code}"
     ], callback
