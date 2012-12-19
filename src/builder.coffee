@@ -1,4 +1,5 @@
 assert = require 'assert'
+async = require 'async'
 child_process = require 'child_process'
 config = require 'config'
 memorystream = require 'memorystream'
@@ -55,13 +56,25 @@ class Build
   do_execute: (callback)->
     assert callback
     self = this
-    exploded = explode_scope self.state.scope
+    async.waterfall [
+      (done)->
+        phpbb.fetch_pr_meta self.state.pr_msg, done
+      (pr_meta, done)->
+        self.build_exec ['git', 'clone', pr_meta.head.repo.clone_url], done
+    ], callback
+  
+  build_exec: (cmd, callback)->
+    self = this
     options = {
       env: process.env,
       stdio: ['ignore', 'pipe', 'pipe'],
     }
-    p = child_process.spawn config.app.dispatcher_path, exploded
+    args = ['-u', config.app.build_user]
+    args.splice args.length, 0, cmd...
+    p = child_process.spawn 'sudo', args
     ms = new memorystream
+    p_code = null
+    p_signal = null
     #p.stdout.setEncoding('utf8')
     p.stdout.pipe(ms)
     #p.stdout.on 'data', (data)->
@@ -74,12 +87,20 @@ class Build
     ms.setEncoding('utf8')
     ms.on 'data', (data)->
       assert callback
+      if config.app.print_output and process.stdout.isTTY
+       console.log data
       self.add_output(data)
-    p.on 'exit', (code)->
-      console.log "build #{self.build_id} exited with #{code}"
+    p.on 'exit', (code, signal)->
+      p_code = code
+      p_signal = signal
+    p.on 'close', ()->
+      console.log "build #{self.build_id} exited with #{p_code}"
       self.state.status = 'finished'
       self.save_state ()->
         callback(null)
+  
+  wip: ()->
+    exploded = explode_scope self.state.scope
   
   # callback may be null
   add_output: (output, callback)->

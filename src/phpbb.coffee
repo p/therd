@@ -29,5 +29,5 @@ exports.resolve_pr = (pr)->
   else
     throw 'This path is not implemented yet'
 
-fetch_pr_meta: (msg, done)->
+exports.fetch_pr_meta = (msg, done)->
   gh.pullRequests.get msg, done
