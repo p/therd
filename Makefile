@@ -12,3 +12,6 @@ gen:
 
 coffee:
 	coffee -c -w -o gen src
+
+npm: package.json
+	npm install
