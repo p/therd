@@ -4,6 +4,7 @@ async = require 'async'
 child_process = require 'child_process'
 config = require 'config'
 memorystream = require 'memorystream'
+shellwords = require 'shellwords'
 db = require './db'
 phpbb = require './phpbb'
 
@@ -57,7 +58,7 @@ class Build
   do_execute: (callback)->
     assert callback
     self = this
-    self.exploded_scope = explode_scope self.state.scope
+    #self.exploded_scope = explode_scope self.state.scope
     async.waterfall [
       (done)->
         phpbb.fetch_pr_meta self.state.pr_msg, done
@@ -68,6 +69,11 @@ class Build
       (done)->
         self.build_exec ['git', 'clone', self.pr_meta.head.repo.clone_url, self.build_dir], done
       (done)->
+        # merge into requested branch
+        self.build_exec_in_dir [
+          u_cmd('check-merge'), self.pr_meta.head.ref, 'origin/' + self.pr_meta.base.ref,
+        ], done
+      (done)->
         console.log "build #{self.build_id} exited with #{self.exit_code}"
     ], callback
   
@@ -77,8 +83,7 @@ class Build
       env: process.env,
       stdio: ['ignore', 'pipe', 'pipe'],
     }
-    args = ['-u', config.app.build_user]
-    args.splice args.length, 0, cmd...
+    args = ['-u', config.app.build_user].concat cmd...
     p = child_process.spawn 'sudo', args
     ms = new memorystream
     p_code = null
@@ -106,6 +111,13 @@ class Build
       self.save_state ()->
         callback(null)
   
+  build_exec_in_dir: (cmd, callback)->
+    escaped_cmd = (shellwords.escape word for word in cmd).join(' ')
+    escaped_dir = shellwords.escape @build_dir
+    cmd = "cd #{escaped_dir} && #{escaped_cmd}"
+    cmd = ['sh', '-c', cmd]
+    @build_exec cmd, callback
+  
   # callback may be null
   add_output: (output, callback)->
     @state.output = '' unless @state.output?
@@ -122,3 +134,6 @@ class Build
         callback null
     else
       db.update_build_sync this.build_id, @state
+
+u_cmd = (cmd)->
+  __dirname + '/../bin/u/' + cmd

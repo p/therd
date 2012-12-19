@@ -1,0 +1,9 @@
+#!/bin/sh
+
+set -e
+
+head_ref="$1"
+base_ref="$2"
+
+git checkout "$base_ref"
+git merge "$head_ref"

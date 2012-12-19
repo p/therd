@@ -18,6 +18,7 @@
     "config": "*",
     "js-yaml": "*",
     "memorystream": "*",
+    "shellwords": "*",
     // https://github.com/isaacs/rimraf/issues/14
     //"rimraf": "*",
     
