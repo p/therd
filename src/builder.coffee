@@ -67,7 +67,7 @@ class Build
         self.build_dir = path.join(config.app.build_root, self.build_id)
         self.build_exec ['rm', '-rf', self.build_dir], done
       (done)->
-        self.build_exec ['git', 'clone', self.pr_meta.head.repo.clone_url, self.build_dir], done
+        self.build_exec ['git', 'cclone', self.pr_meta.head.repo.clone_url, self.build_dir], done
       (done)->
         # merge into requested branch
         self.build_exec_in_dir [
@@ -88,7 +88,7 @@ class Build
       env: process.env,
       stdio: ['ignore', 'pipe', 'pipe'],
     }
-    args = ['-u', config.app.build_user].concat cmd...
+    args = ['-iu', config.app.build_user].concat cmd...
     p = child_process.spawn 'sudo', args
     ms = new memorystream
     p_code = null
