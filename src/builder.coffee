@@ -71,7 +71,12 @@ class Build
       (done)->
         # merge into requested branch
         self.build_exec_in_dir [
-          u_cmd('check-merge'), self.pr_meta.head.ref, 'origin/' + self.pr_meta.base.ref,
+          'git', 'remote', 'add', 'upstream', 'git://github.com/phpbb/phpbb3.git', '-f',
+        ], done
+      (done)->
+        # merge into requested branch
+        self.build_exec_in_dir [
+          u_cmd('check-merge'), 'origin/' + self.pr_meta.head.ref, 'upstream/' + self.pr_meta.base.ref,
         ], done
       (done)->
         console.log "build #{self.build_id} exited with #{self.exit_code}"
