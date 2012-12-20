@@ -1,0 +1,10 @@
+#!/bin/sh
+
+set -e
+
+base_ref="$1"
+
+git checkout "$base_ref"
+git merge branch-under-test
+git branch -D branch-under-test
+git checkout -b branch-under-test

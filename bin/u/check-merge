@@ -7,3 +7,5 @@ base_ref="$2"
 
 git checkout "$base_ref"
 git merge "$head_ref"
+git branch -D branch-under-test || true
+git checkout -b branch-under-test

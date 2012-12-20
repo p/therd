@@ -69,15 +69,26 @@ class Build
       (done)->
         self.build_exec ['git', 'cclone', self.pr_meta.head.repo.clone_url, self.build_dir], done
       (done)->
-        # merge into requested branch
+        # add and fetch upstream for testing merge into requested branch
         self.build_exec_in_dir [
           'git', 'remote', 'add', 'upstream', 'git://github.com/phpbb/phpbb3.git', '-f',
         ], done
+      (done)->
+        self.add_output "Merging into current base", done
       (done)->
         # merge into requested branch
         self.build_exec_in_dir [
           u_cmd('check-merge'), 'origin/' + self.pr_meta.head.ref, 'upstream/' + self.pr_meta.base.ref,
         ], done
+      (done)->
+        self.add_output "Merging into develop", done
+      (done)->
+        # merge into develop
+        if self.pr_meta.base.ref != 'develop'
+          # XXX handle prep-release branches
+          self.build_exec_in_dir [
+            u_cmd('check-merge-forward'), 'upstream/develop',
+          ], done
       (done)->
         console.log "build #{self.build_id} exited with #{self.exit_code}"
     ], callback
