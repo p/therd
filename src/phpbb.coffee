@@ -2,7 +2,7 @@ github = require 'github'
 config = require 'config'
 
 d = console.log
-gh = new github {version: '3.0.0'}
+gh = new github {version: '3.0.0', timeout: config.app.network_timeout}
 gh.authenticate {
   type: 'basic'
   username: config.app.github_username
