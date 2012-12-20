@@ -22,7 +22,7 @@ exports.test_pr = (req, res)->
     scope = new Hash req.body.run
     scope = scope.keys
     doc = {status: 'pending', scope: scope, pr_msg: pr_msg}
-    async.waterfall [
+    async.series [
       (callback)->
         db.soft_put_build id, doc, callback
       (callback)->

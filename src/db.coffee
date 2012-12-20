@@ -28,7 +28,7 @@ exports.soft_put_build = (id, attrs, callback)->
       #if typeof attrs != Object
         #console.log attrs, id, typeof attrs
       docs.put 'build-' + id, attrs, callback
-    (callback)->
+    (ok, callback)->
       # index read
       docs.get 'builds', callback
     (document, callback)->
