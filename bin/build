@@ -1,4 +1,4 @@
 #!/usr/bin/env node
 
 var tools = require('../gen/tools');
-tools.build();
+tools.build(function() { process.exit(); });

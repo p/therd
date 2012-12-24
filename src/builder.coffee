@@ -100,8 +100,11 @@ class Build
           self.build_exec_in_dir [
             u_cmd('check-merge-forward'), 'upstream/develop',
           ], done
+        else
+          done null
       (done)->
         console.log "build #{self.build_id} exited with #{self.exit_code}"
+        done null
     ], callback
   
   build_exec: (cmd, callback)->
@@ -134,7 +137,10 @@ class Build
       self.exit_code = code
       p_signal = signal
     p.on 'close', ()->
-      self.state.status = 'finished'
+      if self.exit_code == 0
+        self.state.status = 'finished'
+      else
+        self.state.status = 'failed'
       self.save_state ()->
         callback(null)
   
