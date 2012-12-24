@@ -50,10 +50,17 @@ class Build
     self = this
     @fetch_state (err)->
       if err
-        callback(err)
+        self.fail err, callback
       else
         self.state.output = ''
-        self.do_execute callback
+        try
+          self.do_execute (err)->
+            if err
+              self.fail err, callback
+            else
+              callback err
+        catch err
+          self.fail err, callback
   
   do_execute: (callback)->
     assert callback
@@ -64,8 +71,12 @@ class Build
         phpbb.fetch_pr_meta self.state.pr_msg, done
       (pr_meta, done)->
         self.pr_meta = pr_meta
-        self.build_dir = path.join(config.app.build_root, self.build_id)
-        self.build_exec ['rm', '-rf', self.build_dir], done
+        unless self.pr_meta.head.repo
+          err = new Error 'pr had no head.repo metadata'
+          done err
+        else
+          self.build_dir = path.join(config.app.build_root, self.build_id)
+          self.build_exec ['rm', '-rf', self.build_dir], done
       (done)->
         self.build_exec ['git', 'cclone', self.pr_meta.head.repo.clone_url, self.build_dir], done
       (done)->
@@ -150,6 +161,13 @@ class Build
         callback null
     else
       db.update_build_sync this.build_id, @state
+  
+  fail: (err, callback)->
+    d err, 'failing'
+    @state.status = 'failed'
+    @state.output += err.toString()
+    @save_state (errnull)->
+      callback err
 
 u_cmd = (cmd)->
   __dirname + '/../bin/u/' + cmd
