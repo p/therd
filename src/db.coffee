@@ -1,9 +1,10 @@
 async = require 'async'
-fsdocs = require '../deps/fsdocs'
 Hash = require 'hashish'
+config = require 'config'
+fsdocs = require '../deps/fsdocs'
 
 d = console.log
-docs = new fsdocs.FSDocs(__dirname + '/../data')
+docs = new fsdocs.FSDocs(config.app.data_path)
 
 #server.info (err,response)->
   #console.log response

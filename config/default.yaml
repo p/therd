@@ -1,0 +1,7 @@
+app:
+  network_timeout: 5000
+  build_user: phpdev
+  build_root: /home/phpdev/therd-builds
+  github_username: urbot
+  github_password: an7OckIr
+  print_output: true

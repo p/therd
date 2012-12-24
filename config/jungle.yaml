@@ -1,8 +1,3 @@
 app:
-  network_timeout: 5000
   dispatcher_path: /home/pie/apps/git-phpbb-tools/run/therd
-  build_user: phpdev
-  build_root: /home/phpdev/therd-builds
-  github_username: urbot
-  github_password: an7OckIr
-  print_output: true
+  data_path: /tmp/therd-data
