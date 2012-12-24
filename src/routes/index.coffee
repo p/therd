@@ -1,40 +1,17 @@
-async = require 'async'
-kue = require 'kue'
-Hash = require 'hashish'
-db = require '../db'
-phpbb = require '../phpbb'
+tools = require '../tools'
 
 d = console.log
-jobs = kue.createQueue()
-
-timestamp = ()->
-  date = new Date()
-  (date.getTime() - 1355477197389) * 1000 + date.getMilliseconds()
 
 exports.index = (req, res) ->
   res.render('index', { title: 'Thundering Herd' });
 
 exports.test_pr = (req, res)->
-  pr = req.body.pr
-  pr_msg = phpbb.resolve_pr pr
-  id = 'pr-' + req.body.pr + '-' + timestamp()
   if req.body.run
     scope = new Hash req.body.run
     scope = scope.keys
-    doc = {status: 'pending', scope: scope, pr_msg: pr_msg}
-    async.series [
-      (callback)->
-        db.soft_put_build id, doc, callback
-      (callback)->
-        job = jobs.create 'build', {
-          title: "build #{id}"
-          build_id: id
-        }
-        job.save()
-        callback null, null
-    ], (err, result)->
+    pr = req.body.pr
+    tools.submit_test_pr pr, scope, (err, id)->
       if err
-        # ignore missing doc, fail on other errors
         res.send 500, JSON.stringify(err)
       else
         res.redirect 'status/' + id

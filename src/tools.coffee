@@ -1,4 +1,16 @@
+async = require 'async'
+kue = require 'kue'
+Hash = require 'hashish'
+db = require './db'
+phpbb = require './phpbb'
+builder = require './builder'
+
 d = console.log
+jobs = kue.createQueue()
+
+timestamp = ()->
+  date = new Date()
+  (date.getTime() - 1355477197389) * 1000 + date.getMilliseconds()
 
 exports.build = ()->
   build_id = process.argv[2]
@@ -6,6 +18,36 @@ exports.build = ()->
   if !build_id
     throw "build_id not specified"
   
-  builder = require './builder'
   builder.process build_id, (err, result)->
     d err, result
+
+exports.build = ()->
+  pr = process.argv[2]
+  scope = process.argv[3]
+  
+  if !pr || !scope
+    throw "build_id or scope not specified"
+  
+  exports.test_pr pr, scope, (err)->
+
+exports.test_pr = (pr, scope, done)->
+  d pr, scope, done
+  exports.submit_test_pr pr, scope, (err, id)->
+    builder.process id, done
+
+exports.submit_test_pr = (pr, scope, done)->
+  pr_msg = phpbb.resolve_pr pr
+  id = 'pr-' + pr + '-' + timestamp()
+  doc = {status: 'pending', scope: scope, pr_msg: pr_msg}
+  async.series [
+    (callback)->
+      db.soft_put_build id, doc, callback
+    (callback)->
+      job = jobs.create 'build', {
+        title: "build #{id}"
+        build_id: id
+      }
+      job.save()
+      callback null
+  ], (err)->
+    done err, id
