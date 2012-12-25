@@ -1,3 +1,4 @@
 app:
   dispatcher_path: /home/pie/apps/git-phpbb/tools/run/therd
   data_path: /tmp/therd-data
+  build_root: /tmp/therd-builds
