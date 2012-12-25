@@ -142,7 +142,11 @@ class Build
       else
         self.state.status = 'failed'
       self.save_state ()->
-        callback(null)
+        if self.exit_code == 0
+          err = null
+        else
+          err = new Error "Command finished with exit code #{self.exit_code}"
+        callback err
   
   build_exec_in_dir: (cmd, callback)->
     escaped_cmd = (shellwords.escape word for word in cmd).join(' ')
