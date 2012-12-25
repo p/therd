@@ -1,3 +1,5 @@
+Hash = require 'hashish'
+db = require '../db'
 tools = require '../tools'
 
 d = console.log

@@ -1,6 +1,5 @@
 async = require 'async'
 kue = require 'kue'
-Hash = require 'hashish'
 db = require './db'
 phpbb = require './phpbb'
 builder = require './builder'
