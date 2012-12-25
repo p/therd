@@ -5,7 +5,9 @@ tools = require '../tools'
 d = console.log
 
 exports.index = (req, res) ->
-  res.render('index', { title: 'Thundering Herd' });
+  db.builds (err, builds)->
+    build_ids = builds.builds.reverse()
+    res.render('index', { title: 'Thundering Herd', build_ids: build_ids });
 
 exports.test_pr = (req, res)->
   if req.body.run

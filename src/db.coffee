@@ -21,6 +21,9 @@ exports.initialize = ()->
 exports.build = (id, callback)->
   docs.get 'build-' + id, callback
 
+exports.builds = (done)->
+  docs.get 'builds', done
+
 exports.soft_put_build = (id, attrs, callback)->
   #d "Adding build #{id}"
   async.waterfall [

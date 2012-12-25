@@ -46,3 +46,11 @@ block content
       label
         input(type='checkbox', name='run[merge31]')
         | merge into develop
+
+  if build_ids.length > 0
+    h2 Recent builds
+    
+    ul
+      for build_id in build_ids
+        li
+          a(href="/status/#{build_id}")= build_id
