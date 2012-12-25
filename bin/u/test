@@ -30,8 +30,10 @@ case "$dbms" in
 	sqlite)
 		export PHPBB_TEST_DBMS="$dbms"
 		;;
+	nodb)
+		;;
 	*)
-		echo "Bad usage" 1>&2
+		echo "Bad dbms $dbms" 1>&2
 		exit 10
 		;;
 esac

@@ -33,7 +33,7 @@ exports.fetch_pr_meta = (msg, done)->
   gh.pullRequests.get msg, done
 
 exports.explode_scope = (scope)->
-  dds = ['postgres', 'mysql', 'mysqli', 'sqlite']
+  dds = ['nodb', 'postgres', 'mysql', 'mysqli', 'sqlite']
   confs = ['unit', 'functional', 'slow', 'update30']
   globals = ['check', 'merge31']
   exploded = []
@@ -48,7 +48,7 @@ exports.explode_scope = (scope)->
   exploded
 
 exports.explode_scope2 = (scope)->
-  dds = ['postgres', 'mysql', 'mysqli', 'sqlite']
+  dds = ['nodb', 'postgres', 'mysql', 'mysqli', 'sqlite']
   confs = ['unit', 'functional', 'slow']
   exploded = []
   for dd in dds
