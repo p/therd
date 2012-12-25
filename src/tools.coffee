@@ -22,7 +22,7 @@ exports.build = ()->
 
 exports.build = (done)->
   pr = process.argv[2]
-  scope = process.argv[3]
+  scope = process.argv[3].split /\s+/
   
   if !pr || !scope
     throw "build_id or scope not specified"

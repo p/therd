@@ -170,7 +170,6 @@ class Build
   run_tests: (done)->
     self = this
     self.exploded_scope = phpbb.explode_scope self.state.scope
-    d self.exploded_scope
     done()
     return
     self.build_exec_in_dir [
