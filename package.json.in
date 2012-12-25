@@ -21,6 +21,7 @@
     "shellwords": "*",
     // https://github.com/isaacs/rimraf/issues/14
     //"rimraf": "*",
+    "partial": "*",
     
     //"couchdb-api": "*",
     "kue": "*",

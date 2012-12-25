@@ -5,6 +5,7 @@ child_process = require 'child_process'
 config = require 'config'
 memorystream = require 'memorystream'
 shellwords = require 'shellwords'
+partial = require 'partial'
 db = require './db'
 phpbb = require './phpbb'
 
@@ -168,12 +169,15 @@ class Build
       callback err
   
   run_tests: (done)->
+    @exploded_scope = phpbb.explode_scope2 @state.scope
+    fns = (partial(@run_dbms_test.bind(this), type, dbms) for type, dbms in @exploded_scope)
+    async.series fns, done
+  
+  # XXX what is in the third parameter?
+  run_dbms_test: (type, dbms, whatsthis, done)->
     self = this
-    self.exploded_scope = phpbb.explode_scope self.state.scope
-    done()
-    return
     self.build_exec_in_dir [
-      u_cmd('test'), 'origin/' + self.pr_meta.head.ref, 'upstream/' + self.pr_meta.base.ref,
+      u_cmd('test'), type, dbms,
     ], done
 
 u_cmd = (cmd)->

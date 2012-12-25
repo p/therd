@@ -46,3 +46,14 @@ exports.explode_scope = (scope)->
     if global in scope
       exploded.push global
   exploded
+
+exports.explode_scope2 = (scope)->
+  dds = ['postgres', 'mysql', 'mysqli', 'sqlite']
+  confs = ['unit', 'functional', 'slow']
+  exploded = []
+  for dd in dds
+    if dd in scope
+      for conf in confs
+        if conf in scope
+          exploded.push [conf, dd]
+  exploded

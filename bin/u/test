@@ -1,0 +1,42 @@
+#!/bin/sh
+
+set -e
+
+# unit, functional or slow
+type="$1"
+# dbms
+dbms="$2"
+
+case "$type" in
+	functional)
+		config="phpunit.xml.$type"
+		export PHPBB_FUNCTIONAL_URL=http://localqi/boards/functional/phpBB/
+		;;
+	slow)
+		config="phpunit.xml.all"
+		;;
+	*)
+		config="phpunit.xml.dist"
+		;;
+esac
+
+case "$dbms" in
+	mysql|postgres)
+		export PHPBB_TEST_DBNAME=phpbbtest
+		export PHPBB_TEST_DBHOST=localhost
+		export PHPBB_TEST_DBUSER=phpbbtest
+		export PHPBB_TEST_DBMS="$dbms"
+		;;
+	sqlite)
+		export PHPBB_TEST_DBMS="$dbms"
+		;;
+	*)
+		echo "Bad usage" 1>&2
+		exit 10
+		;;
+esac
+
+PHPBB_NO_COMPOSER_AUTOLOAD=1 \
+PHPBB_AUTOLOAD=~/shared/phpbb_autoload.php \
+php -d include_path=.:/home/pie/apps/git-phpbb/phpunit-bundle:/home/pie/apps/git-phpbb/deps \
+~pie/apps/git-phpbb/phpunit-bundle/phpunit.php -c "$config"
