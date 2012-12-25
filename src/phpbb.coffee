@@ -31,3 +31,18 @@ exports.resolve_pr = (pr)->
 
 exports.fetch_pr_meta = (msg, done)->
   gh.pullRequests.get msg, done
+
+exports.explode_scope = (scope)->
+  dds = ['postgres', 'mysql', 'mysqli', 'sqlite']
+  confs = ['unit', 'functional', 'slow', 'update30']
+  globals = ['check', 'merge31']
+  exploded = []
+  for dd in dds
+    if dd in scope
+      for conf in confs
+        if conf in scope
+          exploded.push "#{conf}-#{dd}"
+  for global in globals
+    if global in scope
+      exploded.push global
+  exploded

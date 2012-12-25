@@ -17,21 +17,6 @@ exports.start = (build_id, callback)->
 exports.process = (build_id, callback)->
   new Build(build_id).execute callback
 
-explode_scope = (scope)->
-  dds = ['postgres', 'mysql', 'mysqli', 'sqlite']
-  confs = ['unit', 'functional', 'slow', 'update30']
-  globals = ['check', 'merge31']
-  exploded = []
-  for dd in dds
-    if dd in scope
-      for conf in confs
-        if conf in scope
-          exploded.push "#{conf}-#{dd}"
-  for global in globals
-    if global in scope
-      exploded.push global
-  exploded
-
 class Build
   constructor: (build_id)->
     @build_id = build_id
@@ -65,7 +50,6 @@ class Build
   do_execute: (callback)->
     assert callback
     self = this
-    #self.exploded_scope = explode_scope self.state.scope
     async.waterfall [
       (done)->
         phpbb.fetch_pr_meta self.state.pr_msg, done
@@ -91,6 +75,10 @@ class Build
         self.build_exec_in_dir [
           u_cmd('check-merge'), 'origin/' + self.pr_meta.head.ref, 'upstream/' + self.pr_meta.base.ref,
         ], done
+      (done)->
+        self.add_output 'Running tests', done
+      (done)->
+        self.run_tests done
       (done)->
         self.add_output "Merging into develop", done
       (done)->
@@ -178,6 +166,16 @@ class Build
     @state.output += err.toString()
     @save_state (errnull)->
       callback err
+  
+  run_tests: (done)->
+    self = this
+    self.exploded_scope = phpbb.explode_scope self.state.scope
+    d self.exploded_scope
+    done()
+    return
+    self.build_exec_in_dir [
+      u_cmd('test'), 'origin/' + self.pr_meta.head.ref, 'upstream/' + self.pr_meta.base.ref,
+    ], done
 
 u_cmd = (cmd)->
   __dirname + '/../bin/u/' + cmd
