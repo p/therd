@@ -171,7 +171,11 @@ class Build
   run_tests: (done)->
     @exploded_scope = phpbb.explode_scope2 @state.scope
     fns = (partial(@run_dbms_test.bind(this), type, dbms) for type, dbms in @exploded_scope)
-    async.series fns, done
+    if fns.length > 0
+      async.series fns, done
+    else
+      console.warn 'No tests specified'
+      done null
   
   # XXX what is in the third parameter?
   run_dbms_test: (type, dbms, whatsthis, done)->
