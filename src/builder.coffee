@@ -11,13 +11,6 @@ phpbb = require './phpbb'
 
 d = console.log
 
-exports.start = (build_id, callback)->
-  new Build(build_id).execute()
-  callback null, {}
-
-exports.process = (build_id, callback)->
-  new Build(build_id).execute callback
-
 class Build
   constructor: (build_id)->
     @build_id = build_id
@@ -186,3 +179,5 @@ class Build
 
 u_cmd = (cmd)->
   __dirname + '/../bin/u/' + cmd
+
+exports.Build = Build

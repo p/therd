@@ -2,7 +2,6 @@ async = require 'async'
 kue = require 'kue'
 db = require './db'
 phpbb = require './phpbb'
-builder = require './builder'
 
 d = console.log
 jobs = kue.createQueue()
@@ -17,7 +16,7 @@ exports.build = ()->
   if !build_id
     throw "build_id not specified"
   
-  builder.process build_id, (err, result)->
+  exports.process_build build_id, (err, result)->
     d err, result
 
 exports.build = (done)->
@@ -28,7 +27,7 @@ exports.build = (done)->
     throw "build_id or scope not specified"
   
   exports.test_pr pr, scope, (err, build_id)->
-    builder.process build_id, (err, result)->
+    exports.process_build build_id, (err, result)->
       done err
 
 exports.test_pr = (pr, scope, done)->
@@ -57,3 +56,12 @@ exports.submit_test_pr = (pr, scope, done)->
       callback null
   ], (err)->
     done err, id
+
+exports.start_build = (build_id, callback)->
+  Build = require('./builder').Build
+  new Build(build_id).execute()
+  callback null, {}
+
+exports.process_build = (build_id, callback)->
+  Build = require('./builder').Build
+  new Build(build_id).execute callback

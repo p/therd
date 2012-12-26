@@ -1,8 +1,8 @@
 kue = require 'kue'
-builder = require './builder'
+tools = require './tools'
 
 jobs = kue.createQueue()
 
 jobs.process 'build', (job, callback)->
   console.log "processing #{job.data.build_id}"
-  builder.process job.data.build_id, callback
+  tools.process_build job.data.build_id, callback
