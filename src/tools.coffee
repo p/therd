@@ -58,10 +58,8 @@ exports.submit_test_pr = (pr, scope, done)->
     done err, id
 
 exports.start_build = (build_id, callback)->
-  Build = require('./builder').Build
-  new Build(build_id).execute()
+  new phpbb.PhpbbBuild(build_id).execute()
   callback null, {}
 
 exports.process_build = (build_id, callback)->
-  Build = require('./builder').Build
-  new Build(build_id).execute callback
+  new phpbb.PhpbbBuild(build_id).execute callback

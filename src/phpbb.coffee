@@ -1,5 +1,6 @@
 github = require 'github'
 config = require 'config'
+builder = require './builder'
 
 d = console.log
 gh = new github {version: '3.0.0', timeout: config.app.network_timeout}
@@ -57,3 +58,7 @@ exports.explode_scope2 = (scope)->
         if conf in scope
           exploded.push [conf, dd]
   exploded
+
+class PhpbbBuild extends builder.Build
+
+exports.PhpbbBuild = PhpbbBuild
