@@ -1,4 +1,5 @@
 #!/usr/bin/env coffee
 
 tools = require('../src/tools')
-tools.build()
+tools.build ->
+  process.exit()
