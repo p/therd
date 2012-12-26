@@ -62,7 +62,7 @@ class Build
     ms.on 'data', (data)->
       assert callback
       if config.app.print_output and process.stdout.isTTY
-       console.log data
+        process.stdout.write data
       self.add_output(data)
     p.on 'exit', (code, signal)->
       self.exit_code = code
