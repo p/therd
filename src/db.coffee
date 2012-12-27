@@ -22,7 +22,12 @@ exports.build = (id, callback)->
   docs.get 'build-' + id, callback
 
 exports.builds = (done)->
-  docs.get 'builds', done
+  docs.get 'builds', (err, builds)->
+    unless err
+      # if there is no data in the data store, builds will be null -
+      # convert to an empty list
+      builds = builds || {builds: []}
+    done err, builds
 
 exports.soft_put_build = (id, attrs, callback)->
   #d "Adding build #{id}"
