@@ -1,10 +1,9 @@
 async = require 'async'
-kue = require 'kue'
 db = require './db'
 phpbb = require './phpbb'
+queue = require './queue'
 
 d = console.log
-jobs = kue.createQueue()
 
 timestamp = ()->
   date = new Date()
@@ -48,12 +47,11 @@ exports.submit_test_pr = (pr, scope, done)->
     (callback)->
       db.soft_put_build id, doc, callback
     (callback)->
-      job = jobs.create 'build', {
+      attrs = {
         title: "build #{id}"
         build_id: id
       }
-      job.save()
-      callback null
+      queue.queue().push attrs, callback
   ], (err)->
     done err, id
 

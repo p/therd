@@ -25,6 +25,8 @@
     
     //"couchdb-api": "*",
     "kue": "*",
+    // heroku wants a credit card for redis
+    "chain-gang": "*",
     
     "github": "*",
   },
