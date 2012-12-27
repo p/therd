@@ -3,7 +3,7 @@ all: package.json gen
 # Delete // comments and trailing commas from package.json.in
 package.json: package.json.in
 	cat package.json.in |sed -e 's,^ *//.*,,' \
-		|perl -e 'undef $$/; $$_=<>; s/,([\s\n]*[\]}])/\1/; print' \
+		|perl -e 'undef $$/; $$_=<>; s/,([\s\n]*[\]}])/\1/g; print' \
 		>package.json
 
 # Empty dir, create
