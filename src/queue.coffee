@@ -16,13 +16,25 @@ class KueQueue
     @jobs.process 'build', (job, done)->
       callback job.data, done
 
-class ChainGangQueue
+class FSDocsQueueQueue
+  constructor: ()->
+    @fsdq = require './fsdocs-queue'
+    @jobs = @fsdq.createQueue config.app.data_path
+  
+  push: (attrs, done)->
+    job = @jobs.create 'build', attrs
+    job.save (err)=>
+      done err, job
+  
+  pop_loop: (callback)->
+    @jobs.process 'build', (job, done)->
+      callback job.data, done
 
 cls_map = {
   kue: KueQueue
-  'chain-gang': ChainGangQueue
+  'fsdocs-queue': FSDocsQueueQueue
   # special
-  default: KueQueue
+  default: FSDocsQueueQueue
 }
 
 create_queue = ()->
