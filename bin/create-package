@@ -1,0 +1,13 @@
+#!/bin/sh
+
+test -f "$0" && (echo "$0" |grep -q /) || {
+	echo "Please invoke with a path." 1>&2
+	exit 10
+}
+
+src="`dirname $0`/.."
+
+rsync -av --exclude .git --delete "$src"/ .
+make package.json
+git add -f package.json
+git commit -am "Build on `date`"
