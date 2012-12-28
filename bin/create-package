@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 test -f "$0" && (echo "$0" |grep -q /) || {
 	echo "Please invoke with a path." 1>&2
 	exit 10
@@ -8,6 +10,23 @@ test -f "$0" && (echo "$0" |grep -q /) || {
 src="`dirname $0`/.."
 
 rsync -av --exclude .git --delete "$src"/ .
+
+export PATH=$PATH:/home/rvm/opt/npm/bin
+
 make package.json
+
+rm -rf gen
+for i in `find src -name '*.coffee'`; do
+	out=`echo "$i" |sed -e s,^src,gen, -e 's,coffee$,js,'`
+	mkdir -p `dirname "$out"`
+	coffee -c -o `dirname "$out"` "$i"
+	echo $?
+done
+
+sed -i '' -e '/^\/gen/d' -e '/^\/package.json/d' .gitignore
+
+git add .
 git add -f package.json
+rm -rf src
+git add -u
 git commit -am "Build on `date`"

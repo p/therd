@@ -1,3 +1,5 @@
+js_basenames := app builder db phpbb routes/index tools worker scope queue fsdocs-queue
+
 all: package.json gen
 
 # Delete // comments and trailing commas from package.json.in
@@ -15,3 +17,11 @@ coffee:
 
 npm: package.json
 	npm install
+
+js_files := $(addprefix gen/,$(js_basenames))
+js_files := $(addsuffix .js,$(js_files))
+
+gen/%.js: src/%.coffee
+	coffee -c -o `dirname $@` $<
+
+gen-all: gen $(js_files)
