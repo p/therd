@@ -1,0 +1,5 @@
+# set via heroku config:set NODE_ENV=heroku
+app:
+  dispatcher_path: TBD
+  data_path: /tmp/therd-data
+  build_root: /tmp/therd-builds
