@@ -1,6 +1,8 @@
-# frontend to kue and chain-gang
+# frontend to kue and fsdocs-queue
 
 config = require 'config'
+
+d = console.log
 
 class KueQueue
   constructor: ()->
@@ -28,7 +30,7 @@ class FSDocsQueueQueue
   
   pop_loop: (callback)->
     @jobs.process 'build', (job, done)->
-      callback job.data, done
+      callback job, done
 
 cls_map = {
   kue: KueQueue
