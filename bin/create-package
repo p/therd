@@ -20,7 +20,6 @@ for i in `find src -name '*.coffee'`; do
 	out=`echo "$i" |sed -e s,^src,gen, -e 's,coffee$,js,'`
 	mkdir -p `dirname "$out"`
 	coffee -c -o `dirname "$out"` "$i"
-	echo $?
 done
 
 sed -i '' -e '/^\/gen/d' -e '/^\/package.json/d' .gitignore
