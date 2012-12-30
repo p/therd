@@ -1,4 +1,8 @@
 - better frontend, ember.js something
 - better backend handling of jobs: all db tests should run even if some fail,
   but a merge failure should prevent tests from running
-- deploy to heroku
+- support merging additional branches before running tests,
+  per integration branch
+- deploy to vps
+- get heroku to build everything it can
+- get vps to build everything
